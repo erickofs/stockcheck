@@ -1,4 +1,4 @@
-﻿casserole dish,Los Angeles,955,,,,,,
+casserole dish,Los Angeles,955,,,,,,
 pasta,Los Angeles,83,,,,,,
 QUINOA,Austin,519,,,,,,
 BULGUR,New York,938,,,,,,
