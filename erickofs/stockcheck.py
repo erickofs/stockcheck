@@ -1,49 +1,44 @@
-while True:
-    datafile = open('data.txt', 'r', encoding='utf-8')
-    try:
-        for lines in datafile:
-            stock = {}
-            # Strip lines of whitespace
-            lines = lines.strip()
-            # Strip spaces between commas
-            lines = lines.replace(' ,', ',')
-            # Remove lines that have double commas
-            lines = lines.replace(',,', '')
-            # Strip lines
-            lines = lines.strip()
-            # Change all letters to first letter uppercase
-            lines = lines.title()
-            # Apply initial filtering rules along with new ones
-            if lines != '' and not lines.startswith('#') and not lines.startswith(',') and not lines.endswith(',') and lines.count(',') >= 2:
-                # DEBUG Print lines
-                # Sort the words before first comma alphabetically
-                print(lines)
-                # Split lines by comma
-                lines = lines.split(',')
-                lines = list(dict.fromkeys(lines))
-                lines = ','.join(lines)
-                if lines != '' and not lines.startswith('#') and not lines.startswith(',') and not lines.endswith(',') and not lines.count(',') > 2:
-                    lines = lines.split(',')
-                # Assign variables to each element in list
-                    code = lines[0]
-                    quantity = lines[2]
-                    # Assign variables to each element in list. If code is already in dictionary, sum the quantities
-                    stock[code] = {}
-                    stock[code]['quantity'] = quantity
-                    # If code is in dictionary, sum the quantities
-                    if code in stock:
-                        stock[code]['quantity'] = int(stock[code]['quantity']) + int(quantity)
-                    else:
-                        stock[code] = {}
-                        stock[code]['quantity'] = quantity
-                    print('--->', stock)
-                else:
-                    continue
-                #print(stock)
-            else:
-                continue
-    except FileNotFoundError:
-        # raise message if file 'data.txt' does not exist
-        print("File 'data.txt' does not exist in currennt directory.")
-    break
+# . Cada linha contem um certo numero de campos separados por virgulas (arquivo CSV)
+# . O numero de campos não é o mesmo em todas as linhas, algumas linhas tem mais campos, outras tem menos campos.
+# . Podem haver mais de uma linha do mesmo item com estoques de diferentes localidades
 
+# . Usar o minimo possivel de imports
+import sys
+# . Ler um arquivo texto chamado data.txt linha por linha
+# . Imprimir mensagem de erro caso o arquivo data.txt não exista
+try:
+    file = open('data.txt', 'r', encoding='ansi')
+except FileNotFoundError:
+    print("File 'data.txt' does not exist in currennt directory.")
+    sys.exit(1)
+
+stock = {}
+for line in file:
+    # . Ignorar linhas em branco
+    if line == "":
+        continue
+    fields = line.strip().split(',')
+    # . Ignorar linhas de comentário (que começam com '#')
+    if fields[0].startswith('#'):
+        continue
+    # . Ignorar linhas com menos de 3 campos
+    if len(fields) < 3:
+        continue
+    if fields[-1] == "":
+        continue
+    # . O primeiro campo da linha é o codigo do item, o ultimo campo da linha é o numero em estoque
+    # . O codigo do item é uma string e o numero em estoque é um inteiro
+    # . Itens Geladeira, geladeira e GELADEIRA são o mesmo item.
+    # . Se o campo item tiver espaços antes ou depois, tem que tirar. Ou seja: "geladeira  " conta como "geladeira".
+    # . Na impressão os itens vão estar só com a primeira letra maiúscula. 
+    # . Ignorar espaços no inicio e no final da linha
+    item = fields[0].strip().lower().capitalize()
+    quantity = int(fields[-1])
+    # . O programa deve somar o total de estoque por item em um dicionário e no final imprimir esse dicionário
+    if item in stock:
+        stock[item] += quantity
+    else:
+        stock[item] = quantity
+file.close()
+for item in sorted(stock):
+    print(f'Product Code:{item}, Total Stock: {stock[item]}')
