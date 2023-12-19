@@ -1,3 +1,4 @@
+# pylint: disable=consider-using-with
 # . Cada linha contem um certo numero de campos separados por virgulas (arquivo CSV)
 # . O numero de campos não é o mesmo em todas as linhas, algumas linhas tem mais campos, outras tem menos campos.
 # . Podem haver mais de uma linha do mesmo item com estoques de diferentes localidades
@@ -11,18 +12,14 @@ try:
 except FileNotFoundError:
     print("File 'data.txt' does not exist in currennt directory.")
     sys.exit(1)
-
 stock = {}
 for line in file:
     # . Ignorar linhas em branco
     if line == "":
         continue
     fields = line.strip().split(',')
-    # . Ignorar linhas de comentário (que começam com '#')
-    if fields[0].startswith('#'):
-        continue
-    # . Ignorar linhas com menos de 3 campos
-    if len(fields) < 3:
+    # . Ignorar linhas de comentário (que começam com '#') e linhas com menos de 3 campos
+    if fields[0].startswith('#') or len(fields) < 3:
         continue
     if fields[-1] == "":
         continue
